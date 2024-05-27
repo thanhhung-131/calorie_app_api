@@ -23,7 +23,7 @@ app.use('/api',routes);
 // Middleware xử lý lỗi
 app.use(errorMiddleware);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, async () => {
   console.log(`Server is running on port ${PORT}`);
   await sequelize.sync();
