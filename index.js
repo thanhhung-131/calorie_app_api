@@ -15,9 +15,6 @@ app.use(cors({
 }));
 
 // Sử dụng các routes
-app.use('/', (req, res) => {
-  res.send('Hello World');
-})
 app.use('/api',routes);
 
 // Middleware xử lý lỗi
