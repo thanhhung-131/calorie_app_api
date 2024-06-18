@@ -31,13 +31,32 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.ENUM('admin', 'user', 'guest'), // Định nghĩa ENUM cho trường role
         allowNull: false,
         defaultValue: 'user'
+      },
+      gender: DataTypes.STRING,
+      weight: DataTypes.FLOAT,
+      height: DataTypes.FLOAT,
+      age: DataTypes.INTEGER,
+      activity_level: {
+        type: DataTypes.ENUM(
+          'sedentary',
+          'lightly_active',
+          'moderately_active',
+          'very_active',
+          'extra_active'
+        ),
+        allowNull: false,
+        defaultValue: 'sedentary' // Giá trị mặc định
+      },
+      target: {
+        type: DataTypes.ENUM('weight_gain', 'weight_loss', 'maintain'),
+        allowNull: false,
+        defaultValue: 'maintain'
       }
     },
     {}
   )
   User.associate = function (models) {
-    // associations can be defined here
-    User.hasMany(models.CalorieCalculationHistory, { foreignKey: 'user_id' })
+
   }
   return User
 }

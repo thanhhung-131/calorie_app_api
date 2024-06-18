@@ -1,9 +1,9 @@
 const userService = require('./userService');
 const foodService = require('./foodService');
-const calorieService = require('./calorieService');
+const userHealthDataService = require('./user_health_dataService');
 
 module.exports = {
   userService,
   foodService,
-  calorieService,
+  userHealthDataService,
 };

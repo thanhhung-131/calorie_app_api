@@ -1,35 +1,24 @@
 const express = require('express');
 const router = express.Router();
-const { userService } = require('../services');
+const userController = require('../controllers/user');
+const authenticate = require('../middlewares/authenticate');
 
-router.get('/', async (req, res) => {
-  try {
-    const users = await userService.getAllUsers(); // Gọi phương thức từ service để lấy danh sách người dùng
-    res.json(users); // Trả về danh sách người dùng dưới dạng JSON
-  } catch (error) {
-    console.error('Error fetching users:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
+// Lấy danh sách người dùng
+router.get('/', authenticate('admin'), userController.getAllUsers);
 
 // Đăng ký người dùng mới
-router.post('/register', async (req, res) => {
-  try {
-    const user = await userService.registerUser(req.body);
-    res.status(201).json(user);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+router.post('/register', userController.registerUser);
 
 // Đăng nhập
-router.post('/login', async (req, res) => {
-  try {
-    const token = await userService.loginUser(req.body);
-    res.json({ token });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+router.post('/login', userController.loginUser);
+
+// Xem thông tin cá nhân
+router.get('/profile', authenticate(), userController.getUserProfile);
+
+// Chỉnh sửa thông tin cá nhân
+router.put('/update', authenticate(), userController.updateUser);
+
+// Xóa người dùng
+router.delete('/:userId', authenticate('admin'), userController.deleteUser);
 
 module.exports = router;

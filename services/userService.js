@@ -1,8 +1,19 @@
 // services/userService.js
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { User } = require('../models');
+const { User, UserHealthData } = require('../models');
 const { ValidationError, UnauthorizedError, NotFoundError, ConflictError } = require('./errorService');
+
+// Phương thức để lấy danh sách người dùng
+const getAllUsers = async () => {
+  try {
+    const users = await User.findAll(); // Truy vấn danh sách người dùng từ cơ sở dữ liệu
+    return users;
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    throw new Error('Error fetching users');
+  }
+};
 
 // Đăng ký
 const registerUser = async (userData) => {
@@ -39,19 +50,59 @@ const loginUser = async ({ email, password }) => {
   return token;
 };
 
-// Phương thức để lấy danh sách người dùng
-const getAllUsers = async () => {
+const getUserProfile = async (req, res, next) => {
   try {
-    const users = await User.findAll(); // Truy vấn danh sách người dùng từ cơ sở dữ liệu
-    return users;
+    const userId = req.user.id;
+
+    const userProfile = await User.findByPk(userId, {
+      include: {
+        model: UserHealthData,
+        attributes: ['height', 'age', 'gender', 'target', 'weight', 'activity_level']
+      }
+    });
+
+    if (!userProfile) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json(userProfile);
+    next()
   } catch (error) {
-    console.error('Error fetching users:', error);
-    throw new Error('Error fetching users');
+    res.status(400).json({ error: error.message });
   }
 };
+
+// Chỉnh sửa thông tin cá nhân
+const updateUser = async (userId, updateData) => {
+  const user = await User.findByPk(userId);
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+
+  // Hash the password if it is present in updateData
+  if (updateData.password) {
+    updateData.password_hash = await bcrypt.hash(updateData.password, 10);
+    delete updateData.password; // Remove the plain text password from updateData
+  }
+
+  try {
+    // Use set to update user data and save to persist changes
+    await user.set(updateData);
+    await user.save();
+    return user;
+  } catch (err) {
+    if (err.name === 'SequelizeValidationError') {
+      throw new ValidationError(err.errors.map(e => e.message).join(', '));
+    }
+    throw new ValidationError('Update failed');
+  }
+};
+
 
 module.exports = {
   registerUser,
   loginUser,
+  updateUser,
   getAllUsers,
+  getUserProfile,
 };
