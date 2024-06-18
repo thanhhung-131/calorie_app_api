@@ -12,7 +12,9 @@ module.exports = (sequelize, DataTypes) => {
       carbohydrate: DataTypes.FLOAT,
       type: DataTypes.ENUM('Non-Vegetarian', 'Vegetarian', 'Mixed')
     },
-    {}
+    {
+      tableName: 'food'
+    }
   )
 
   Food.associate = function (models) {
