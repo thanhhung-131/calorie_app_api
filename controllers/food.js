@@ -3,10 +3,11 @@ const { uploadImageToFirebase } = require('../firebase');
 const { Op, Sequelize } = require('sequelize');
 
 exports.createFood = async (req, res) => {
-  const { name, description, calories_per_serving, protein, fat, carbohydrate, fiber, type } = req.body;
+  const { name, description, calories_per_serving, protein, fat, carbohydrate, type } = req.body;
   const image = req.file;
 
   try {
+    // Tạo bản ghi món ăn mới
     const food = await Food.create({
       name,
       description,
@@ -17,15 +18,24 @@ exports.createFood = async (req, res) => {
       type
     });
 
+    let imageUrl = null;
+
+    // Nếu có ảnh, tải lên Firebase và tạo bản ghi ảnh món ăn
     if (image) {
-      const imageUrl = await uploadImageToFirebase(name, image.buffer);
+      imageUrl = await uploadImageToFirebase(name, image.buffer);
       await FoodImage.create({
         food_id: food.id,
         image_url: imageUrl
       });
     }
 
-    res.status(201).json(food);
+    // Bao gồm URL của ảnh trong phản hồi
+    const foodResponse = {
+      ...food.toJSON(),
+      image_url: imageUrl
+    };
+
+    res.status(201).json(foodResponse);
   } catch (error) {
     console.error('Error creating food:', error);
     res.status(500).json({ error: 'Internal server error' });

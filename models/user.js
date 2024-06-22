@@ -53,7 +53,9 @@ module.exports = (sequelize, DataTypes) => {
         defaultValue: 'maintain'
       }
     },
-    {}
+    {
+      tableName: 'users',
+    }
   )
   User.associate = function (models) {
 

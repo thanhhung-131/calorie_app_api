@@ -1,3 +1,4 @@
+const { uploadImageToFirebase } = require('../firebase');
 const { userService } = require('../services');
 
 // Lấy danh sách người dùng
@@ -35,8 +36,21 @@ exports.loginUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const userId = req.user.id; // Assuming user ID is stored in the request by the authenticate middleware
-    const user = await userService.updateUser(userId, req.body);
-    res.json(user);
+    console.log(req.file)
+
+    // Xử lý file upload
+    if (req.file) {
+      const file = req.file;
+      const imageUrl = await uploadImageToFirebase(file.originalname, file.buffer);
+
+      // Cập nhật thông tin người dùng với link ảnh
+      const user = await userService.updateUser(userId, { ...req.body, avatar_url: imageUrl });
+      res.json(user);
+    } else {
+      // Nếu không có file upload, chỉ cập nhật thông tin người dùng
+      const user = await userService.updateUser(userId, req.body);
+      res.json(user);
+    }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
