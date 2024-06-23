@@ -54,6 +54,8 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     {
+      sequelize,
+      modelName: 'User',
       tableName: 'users', // Sử dụng đúng tên bảng là `users`
       underscored: true, // Tùy chọn để sử dụng kiểu đặt tên underscore trong các trường hợp
     }
@@ -61,6 +63,8 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = function (models) {
     // Định nghĩa các mối quan hệ tại đây nếu có
+    User.hasMany(models.FavoriteFood, { foreignKey: 'user_id', as: 'favorite_foods' })
+    User.hasMany(models.UserHealthData, { foreignKey: 'user_id', as: 'health_data' })
   }
 
   return User
