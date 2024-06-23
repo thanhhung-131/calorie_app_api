@@ -25,6 +25,7 @@ const registerUser = async (userData) => {
   const hashedPassword = await bcrypt.hash(userData.password, 10);
   try {
     const user = await User.create({ ...userData, password_hash: hashedPassword });
+    console.log(User)
     return user;
   } catch (err) {
     if (err.name === 'SequelizeValidationError') {
