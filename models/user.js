@@ -1,71 +1,78 @@
-'use strict'
-
-const { ENUM } = require('sequelize')
-
+// models/user.js
+'use strict';
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
     {
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false
+      },
       username: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        validate: {
-          notEmpty: {
-            msg: 'Please enter Your name'
-          }
-        }
+        type: DataTypes.STRING(255),
+        allowNull: false
       },
       email: {
-        type: DataTypes.STRING,
+        type: DataTypes.STRING(255),
         allowNull: false,
-        unique: true,
-        validate: {
-          isEmail: {
-            msg: 'Please enter a valid email address'
-          }
-        }
+        unique: true
       },
-      password_hash: DataTypes.STRING,
-      avatar_url: DataTypes.STRING,
+      password_hash: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      avatar_url: {
+        type: DataTypes.STRING(255)
+      },
       role: {
-        type: DataTypes.ENUM('admin', 'user', 'guest'), // Định nghĩa ENUM cho trường role
-        allowNull: false,
-        defaultValue: 'user'
+        type: DataTypes.ENUM('user', 'admin'),
+        allowNull: false
       },
-      gender: DataTypes.STRING,
-      weight: DataTypes.FLOAT,
-      height: DataTypes.FLOAT,
-      age: DataTypes.INTEGER,
+      gender: {
+        type: DataTypes.STRING(255),
+        allowNull: false
+      },
+      weight: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+      },
+      height: {
+        type: DataTypes.FLOAT,
+        allowNull: false
+      },
+      age: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
       activity_level: {
-        type: DataTypes.ENUM(
-          'sedentary',
-          'lightly_active',
-          'moderately_active',
-          'very_active',
-          'extra_active'
-        ),
-        allowNull: false,
-        defaultValue: 'sedentary' // Giá trị mặc định
+        type: DataTypes.ENUM('sedentary', 'lightly_active', 'moderately_active', 'very_active', 'extra_active'),
+        allowNull: false
       },
       target: {
         type: DataTypes.ENUM('weight_gain', 'weight_loss', 'maintain'),
-        allowNull: false,
-        defaultValue: 'maintain'
+        allowNull: false
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false
       }
     },
     {
-      sequelize,
-      modelName: 'User',
-      tableName: 'users', // Sử dụng đúng tên bảng là `users`
-      underscored: true, // Tùy chọn để sử dụng kiểu đặt tên underscore trong các trường hợp
+      tableName: 'users',
+      timestamps: true
     }
-  )
+  );
 
-  User.associate = function (models) {
-    // Định nghĩa các mối quan hệ tại đây nếu có
-    User.hasMany(models.FavoriteFood, { foreignKey: 'user_id', as: 'favorite_foods' })
-    User.hasMany(models.UserHealthData, { foreignKey: 'user_id', as: 'health_data' })
-  }
+  User.associate = function(models) {
+    // associations can be defined here
+    // No associations defined for User in this example
+  };
 
-  return User
-}
+  return User;
+};

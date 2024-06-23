@@ -17,6 +17,8 @@ const getAllUsers = async () => {
 
 // Đăng ký
 const registerUser = async (userData) => {
+  const tableName = User.tableName; // Lấy tên bảng từ model User
+  console.log(`Tên bảng đang sử dụng là: ${tableName}`);
   const existingUser = await User.findOne({ where: { email: userData.email } });
   if (existingUser) {
     throw new ConflictError('Email is already in use');
