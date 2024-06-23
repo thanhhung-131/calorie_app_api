@@ -28,31 +28,34 @@ module.exports = (sequelize, DataTypes) => {
       },
       role: {
         type: DataTypes.ENUM('user', 'admin'),
-        allowNull: false
+        allowNull: false,
+        defaultValue: 'user',
       },
       gender: {
         type: DataTypes.STRING(255),
-        allowNull: false
+        allowNull: true
       },
       weight: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: true
       },
       height: {
         type: DataTypes.FLOAT,
-        allowNull: false
+        allowNull: true
       },
       age: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
       activity_level: {
         type: DataTypes.ENUM('sedentary', 'lightly_active', 'moderately_active', 'very_active', 'extra_active'),
-        allowNull: false
+        allowNull: true,
+        defaultValue: 'sedentary',
       },
       target: {
         type: DataTypes.ENUM('weight_gain', 'weight_loss', 'maintain'),
-        allowNull: false
+        allowNull: true,
+        defaultValue: 'maintain',
       },
       createdAt: {
         type: DataTypes.DATE,
