@@ -54,11 +54,14 @@ module.exports = (sequelize, DataTypes) => {
       }
     },
     {
-      tableName: 'users',
+      tableName: 'users', // Sử dụng đúng tên bảng là `users`
+      underscored: true, // Tùy chọn để sử dụng kiểu đặt tên underscore trong các trường hợp
     }
   )
-  User.associate = function (models) {
 
+  User.associate = function (models) {
+    // Định nghĩa các mối quan hệ tại đây nếu có
   }
+
   return User
 }
