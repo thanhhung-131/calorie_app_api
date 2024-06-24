@@ -29,7 +29,6 @@ const authenticate = (requiredRole) => {
       req.user = user; // Add user to request object
       next(); // Proceed to the next middleware or route handler
     } catch (error) {
-      console.log(error)
       if (error instanceof ForbiddenError) {
         return res.status(403).json({ error: error.message });
       }

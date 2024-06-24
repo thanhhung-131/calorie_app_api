@@ -74,7 +74,6 @@ module.exports = (sequelize, DataTypes) => {
 
   User.associate = function(models) {
     // associations can be defined here
-    // No associations defined for User in this example
   };
 
   return User;

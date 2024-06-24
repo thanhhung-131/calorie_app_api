@@ -59,15 +59,14 @@ const loginUser = async ({ email, password }) => {
     throw new UnauthorizedError('Invalid email or password');
   }
 
-  const token = jwt.sign({ userId: user.id }, 'secret_key'); // Replace 'secret_key' with your secret key
+  const token = jwt.sign({ userId: user.id }, 'secret_key');
   return token;
 };
 
 const getUserProfile = async (req, res, next) => {
   const userId = req.user.id;
+  console.log(userId)
   try {
-    console.log(userId)
-
     const userProfile = await User.findByPk(userId, {
       include: {
         model: UserHealthData,

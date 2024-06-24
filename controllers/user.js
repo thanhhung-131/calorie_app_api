@@ -15,6 +15,7 @@ exports.getAllUsers = async (req, res) => {
 
 // Lấy thông tin người dùng bằng ID
 exports.getUserById = async (req, res) => {
+  console.log(1)
   try {
     const userId = req.params.userId;
     const user = await userService.getUserById(userId);
@@ -69,13 +70,7 @@ exports.updateUser = async (req, res) => {
 
 // Xem thông tin cá nhân
 exports.getUserProfile = async (req, res) => {
-  try {
-    const user = req.user; // user is already added to req by authenticate middleware
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
+  const user = req.user; // user is already added to req by authenticate middleware
     res.json({
       id: user.id,
       username: user.username,
@@ -89,10 +84,6 @@ exports.getUserProfile = async (req, res) => {
       target: user.target,
       activity_level: user.activity_level,
     });
-  } catch (error) {
-    console.error('Error retrieving user profile:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
 };
 
 // Xóa người dùng

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const userController = require('../controllers/user');
+const userController = require('../controllers/user')
 const authenticate = require('../middlewares/authenticate');
 const multer = require('multer');
 const upload = multer();
@@ -9,7 +9,7 @@ const upload = multer();
 router.get('/', authenticate('admin'), userController.getAllUsers);
 
 // Lấy thông tin người dùng bằng ID
-router.get('/:userId', authenticate(), userController.getUserById);
+router.get('/user/:userId', authenticate(), userController.getUserById);
 
 // Đăng ký người dùng mới
 router.post('/register', userController.registerUser);
