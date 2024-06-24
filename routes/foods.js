@@ -20,6 +20,7 @@ router.get('/search', foodController.searchFoodsByName);
 router.get('/search-one', foodController.searchFoodByName);
 
 router.get('/high-calorie/:threshold', foodController.getHighCalorieFoods);
+router.get('/low-calorie/:threshold', foodController.getLowCalorieFoods);
 
 // Xóa food
 router.delete('/food/:foodId', authenticate('admin'), foodController.deleteFood);
