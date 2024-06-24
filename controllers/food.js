@@ -238,3 +238,16 @@ exports.getLowCalorieFoods = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' })
   }
 }
+
+exports.deleteFood = (req, res) => {
+  const { foodId } = req.params
+
+  Food.destroy({ where: { id: foodId } })
+    .then(() => {
+      res.json({ message: 'Food deleted successfully' })
+    })
+    .catch((error) => {
+      console.error('Error deleting food:', error)
+      res.status(500).json({ error: 'Internal server error' })
+    })
+}

@@ -21,4 +21,7 @@ router.get('/search-one', foodController.searchFoodByName);
 
 router.get('/high-calorie/:threshold', foodController.getHighCalorieFoods);
 
+// Xóa food
+router.delete('/food/:foodId', authenticate('admin'), foodController.deleteFood);
+
 module.exports = router;
