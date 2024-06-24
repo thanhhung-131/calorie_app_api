@@ -15,7 +15,6 @@ const authenticate = (requiredRole) => {
 
     try {
       const decoded = jwt.verify(token, 'secret_key'); // Replace 'secret_key' with your secret key
-      console.log(decoded)
       const user = await User.findByPk(decoded.userId);
 
       if (!user) {

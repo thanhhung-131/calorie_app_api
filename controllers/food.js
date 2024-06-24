@@ -3,7 +3,7 @@ const { uploadImageToFirebase } = require('../firebase');
 const { Op, Sequelize } = require('sequelize');
 
 exports.createFood = async (req, res) => {
-  const { name, description, calories_per_serving, protein, fat, carbohydrate, type } = req.body;
+  const { name, description, calories_per_serving, protein, fat, carbohydrate, type, image_url } = req.body;
   const image = req.file;
 
   try {
@@ -26,6 +26,12 @@ exports.createFood = async (req, res) => {
       await FoodImage.create({
         food_id: food.id,
         image_url: imageUrl
+      });
+    }
+    else {
+      await FoodImage.create({
+        food_id: food.id,
+        image_url
       });
     }
 
