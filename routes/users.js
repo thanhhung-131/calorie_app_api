@@ -9,7 +9,7 @@ const upload = multer();
 router.get('/', authenticate('admin'), userController.getAllUsers);
 
 // Lấy thông tin người dùng bằng ID
-router.get('/user/:userId', authenticate(), userController.getUserById);
+router.get('/user/:userId', authenticate('admin'), userController.getUserById);
 
 // Đăng ký người dùng mới
 router.post('/register', userController.registerUser);
