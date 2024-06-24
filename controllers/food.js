@@ -181,3 +181,22 @@ exports.getHighCalorieFoods = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+exports.getLowCalorieFoods = async (req, res) => {
+  const { threshold } = req.params;
+
+  try {
+    const foods = await Food.findAll({
+      where: {
+        calories_per_serving: {
+          [Sequelize.Op.lt]: threshold
+        }
+      },
+      include: { model: FoodImage, as: 'images' }
+    });
+
+    res.json(foods);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};

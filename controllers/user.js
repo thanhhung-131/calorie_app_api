@@ -1,5 +1,6 @@
 const { uploadImageToFirebase } = require('../firebase');
 const { userService } = require('../services');
+const { getUserProfile } = require('../services/userService');
 
 // Lấy danh sách người dùng
 exports.getAllUsers = async (req, res) => {
@@ -9,6 +10,17 @@ exports.getAllUsers = async (req, res) => {
   } catch (error) {
     console.error('Error fetching users:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+// Lấy thông tin người dùng bằng ID
+exports.getUserById = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const user = await userService.getUserById(userId);
+    res.json(user);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -36,7 +48,6 @@ exports.loginUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const userId = req.user.id; // Assuming user ID is stored in the request by the authenticate middleware
-    console.log(req.file)
 
     // Xử lý file upload
     if (req.file) {
@@ -58,7 +69,13 @@ exports.updateUser = async (req, res) => {
 
 // Xem thông tin cá nhân
 exports.getUserProfile = async (req, res) => {
-  const user = req.user; // user is already added to req by authenticate middleware
+  try {
+    const user = req.user; // user is already added to req by authenticate middleware
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
     res.json({
       id: user.id,
       username: user.username,
@@ -72,6 +89,10 @@ exports.getUserProfile = async (req, res) => {
       target: user.target,
       activity_level: user.activity_level,
     });
+  } catch (error) {
+    console.error('Error retrieving user profile:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 };
 
 // Xóa người dùng
@@ -80,6 +101,19 @@ exports.deleteUser = async (req, res) => {
     const userId = req.params.userId;
     await userService.deleteUser(userId);
     res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
+// Cập nhật role người dùng
+exports.updateUserRole = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const role = req.body.role;
+    const user = await userService.updateUserRole(userId, role);
+    res.json(user);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

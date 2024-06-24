@@ -15,10 +15,21 @@ const getAllUsers = async () => {
   }
 };
 
+// Phương thức để lấy thông tin người dùng bằng ID
+const getUserById = async (userId) => {
+  try {
+    const user = await User.findByPk(userId); // Truy vấn người dùng từ cơ sở dữ liệu bằng ID
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+    return user;
+  } catch (error) {
+    throw new Error('Error fetching user');
+  }
+};
+
 // Đăng ký
 const registerUser = async (userData) => {
-  const tableName = User.tableName; // Lấy tên bảng từ model User
-  console.log(`Tên bảng đang sử dụng là: ${tableName}`);
   const existingUser = await User.findOne({ where: { email: userData.email } });
   if (existingUser) {
     throw new ConflictError('Email is already in use');
@@ -27,7 +38,6 @@ const registerUser = async (userData) => {
   const hashedPassword = await bcrypt.hash(userData.password, 10);
   try {
     const user = await User.create({ ...userData, password_hash: hashedPassword });
-    console.log(User)
     return user;
   } catch (err) {
     if (err.name === 'SequelizeValidationError') {
@@ -54,8 +64,9 @@ const loginUser = async ({ email, password }) => {
 };
 
 const getUserProfile = async (req, res, next) => {
+  const userId = req.user.id;
   try {
-    const userId = req.user.id;
+    console.log(userId)
 
     const userProfile = await User.findByPk(userId, {
       include: {
@@ -71,6 +82,7 @@ const getUserProfile = async (req, res, next) => {
     res.json(userProfile);
     next()
   } catch (error) {
+    console.log(error)
     res.status(400).json({ error: error.message });
   }
 };
@@ -101,6 +113,33 @@ const updateUser = async (userId, updateData) => {
   }
 };
 
+// Delete a user from the database
+const deleteUser = async (userId) => {
+  const user = await User.findByPk(userId);
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+
+  await user.destroy();
+};
+
+// Update role of a user
+const updateUserRole = async (userId, role) => {
+  const user = await User.findByPk(userId);
+  if (!user) {
+    throw new NotFoundError('User not found');
+  }
+
+  try {
+    await user.update({ role });
+    return user;
+  } catch (err) {
+    if (err.name === 'SequelizeValidationError') {
+      throw new ValidationError(err.errors.map(e => e.message).join(', '));
+    }
+    throw new ValidationError('Update failed');
+  }
+};
 
 module.exports = {
   registerUser,
@@ -108,4 +147,7 @@ module.exports = {
   updateUser,
   getAllUsers,
   getUserProfile,
+  getUserById,
+  deleteUser,
+  updateUserRole,
 };
