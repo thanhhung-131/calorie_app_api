@@ -29,9 +29,10 @@ exports.createFood = async (req, res) => {
       });
     }
     else {
+      imageUrl = image_url;
       await FoodImage.create({
         food_id: food.id,
-        image_url
+        image_url: imageUrl
       });
     }
 
