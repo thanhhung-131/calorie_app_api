@@ -30,6 +30,6 @@ router.put('/update', authenticate(), upload.single('avatar_url'), userControlle
 router.put('/:userId/update-role', authenticate('admin'), userController.updateUserRole);
 
 // Xóa người dùng
-router.delete('/:userId', authenticate('admin'), userController.deleteUser);
+router.delete('/user/:userId', authenticate('admin'), userController.deleteUser);
 
 module.exports = router;
