@@ -81,7 +81,8 @@ exports.updateFood = async (req, res) => {
     protein,
     fat,
     carbohydrate,
-    type
+    type,
+    image_url
   } = req.body;
   const image = req.file;
 
@@ -103,10 +104,23 @@ exports.updateFood = async (req, res) => {
 
     await food.save();
 
-    let imageUrl = null;
-    // If an image is provided, upload it to Firebase and update food image URL
+    let imageUrl = image_url; // Use provided image URL if exists
+    // If an image file is provided, upload it to Firebase and update food image URL
     if (image) {
       imageUrl = await uploadImageToFirebase(foodId, image.buffer);
+      let foodImage = await FoodImage.findOne({ where: { food_id: foodId } });
+
+      if (!foodImage) {
+        foodImage = await FoodImage.create({
+          food_id: foodId,
+          image_url: imageUrl
+        });
+      } else {
+        foodImage.image_url = imageUrl;
+        await foodImage.save();
+      }
+    } else if (image_url) {
+      // Update food image URL directly if image_url is provided
       let foodImage = await FoodImage.findOne({ where: { food_id: foodId } });
 
       if (!foodImage) {
@@ -256,7 +270,7 @@ exports.deleteFood = (req, res) => {
     .then(() => {
       res.json({ message: 'Food deleted successfully' })
     })
-    .catch((error) => {
+    .catch(error => {
       console.error('Error deleting food:', error)
       res.status(500).json({ error: 'Internal server error' })
     })
