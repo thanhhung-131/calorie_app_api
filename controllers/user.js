@@ -15,7 +15,6 @@ exports.getAllUsers = async (req, res) => {
 
 // Lấy thông tin người dùng bằng ID
 exports.getUserById = async (req, res) => {
-  console.log(1)
   try {
     const userId = req.params.userId;
     const user = await userService.getUserById(userId);

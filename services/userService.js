@@ -65,7 +65,6 @@ const loginUser = async ({ email, password }) => {
 
 const getUserProfile = async (req, res, next) => {
   const userId = req.user.id;
-  console.log(userId)
   try {
     const userProfile = await User.findByPk(userId, {
       include: {
