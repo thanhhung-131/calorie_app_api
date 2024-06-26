@@ -73,7 +73,7 @@ exports.createFood = async (req, res) => {
 }
 
 exports.updateFood = async (req, res) => {
-  const { foodId } = req.params
+  const { foodId } = req.params;
   const {
     name,
     description,
@@ -82,50 +82,60 @@ exports.updateFood = async (req, res) => {
     fat,
     carbohydrate,
     type
-  } = req.body
-  const image = req.file
+  } = req.body;
+  const image = req.file;
 
   try {
-    let food = await Food.findByPk(foodId)
+    let food = await Food.findByPk(foodId);
 
     if (!food) {
-      return res.status(404).json({ error: 'Food not found' })
+      return res.status(404).json({ error: 'Food not found' });
     }
 
     // Update food data
-    food.name = name || food.name
-    food.description = description || food.description
-    food.calories_per_serving =
-      calories_per_serving || food.calories_per_serving
-    food.protein = protein || food.protein
-    food.fat = fat || food.fat
-    food.carbohydrate = carbohydrate || food.carbohydrate
-    food.type = type || food.type
+    food.name = name || food.name;
+    food.description = description || food.description;
+    food.calories_per_serving = calories_per_serving || food.calories_per_serving;
+    food.protein = protein || food.protein;
+    food.fat = fat || food.fat;
+    food.carbohydrate = carbohydrate || food.carbohydrate;
+    food.type = type || food.type;
 
-    await food.save()
+    await food.save();
 
+    let imageUrl = null;
     // If an image is provided, upload it to Firebase and update food image URL
     if (image) {
-      const imageUrl = await uploadImageToFirebase(foodId, image.buffer)
-      let foodImage = await FoodImage.findOne({ where: { food_id: foodId } })
+      imageUrl = await uploadImageToFirebase(foodId, image.buffer);
+      let foodImage = await FoodImage.findOne({ where: { food_id: foodId } });
 
       if (!foodImage) {
         foodImage = await FoodImage.create({
           food_id: foodId,
           image_url: imageUrl
-        })
+        });
       } else {
-        foodImage.image_url = imageUrl
-        await foodImage.save()
+        foodImage.image_url = imageUrl;
+        await foodImage.save();
+      }
+    } else {
+      // Retrieve existing image URL if no new image is provided
+      const foodImage = await FoodImage.findOne({ where: { food_id: foodId } });
+      if (foodImage) {
+        imageUrl = foodImage.image_url;
       }
     }
 
-    res.json(food)
+    res.json({
+      ...food.toJSON(),
+      image_url: imageUrl
+    });
   } catch (error) {
-    console.error('Error updating food:', error)
-    res.status(500).json({ error: 'Internal server error' })
+    console.error('Error updating food:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
-}
+};
+
 
 exports.getAllFoodsWithImages = async (req, res) => {
   try {

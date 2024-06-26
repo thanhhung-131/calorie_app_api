@@ -9,7 +9,7 @@ const upload = multer();
 router.post('/', authenticate('admin'), upload.single('image_url'), foodController.createFood);
 
 // Thêm ảnh cho món ăn và cập nhật thông tin món ăn
-router.post('/food/:foodId', authenticate('admin'), upload.single('image_url'), foodController.updateFood);
+router.put('/food/:foodId', authenticate('admin'), upload.single('image_url'), foodController.updateFood);
 
 // Lấy toàn bộ món ăn cùng ảnh
 router.get('/', foodController.getAllFoodsWithImages);
